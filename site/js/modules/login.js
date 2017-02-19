@@ -16,7 +16,7 @@ PageScript.prototype.page = "login";
 
 PageScript.prototype.main = function() {
 	var a=Sf.parseAppCallbackUrl(self.QueryString.next);
-	self.appDomain = a.appDomai
+	self.appDomain = a.appDomain
 	self.neededAssurances = a.neededAssurances
 	self.dataGivingAccepted=false;
 	console.log(self.neededAssurances)

@@ -15,11 +15,13 @@ export function QueryStringFunc( search ) { //http://stackoverflow.com/questions
 }
 
 export function parseAppCallbackUrl( url ) {
+	console.log(url)
 	var neededAssurances,
 		appDomain
 	if ( url ) {
 		var a = decodeURIComponent( url ).split("?"),
 			vars = QueryStringFunc('?'+a[1]);
+			console.log(vars)
 		if (vars.redirect_uri) {
 			var c = decodeURIComponent(vars.redirect_uri).split("?")
 			appDomain=c[0].split('://')[1].split('/')[0]
@@ -27,5 +29,5 @@ export function parseAppCallbackUrl( url ) {
 			if (b.need)	neededAssurances = b.need.split(',')
 		}
 	}
-	return { appdomain: appDomain, neededAssurances: neededAssurances }
+	return { appDomain: appDomain, neededAssurances: neededAssurances }
 }
