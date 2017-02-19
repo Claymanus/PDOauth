@@ -143,7 +143,7 @@ PageScript.prototype.main = function() {
 	} 
 	
 	PageScript.prototype.userNotLoggedIn = function( response ) {
-		var data = self.validateServerMessage( response );
+		var data = Ajax.validateServerMessage( response );
 		if (data.errors && data.errors[0]!="no authorization") Msg.display(self.processErrors(data));
 		self.refreshTheNavbar()
 		if (self.QueryString.section) {

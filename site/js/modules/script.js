@@ -5,6 +5,7 @@ import { uris } from './adauris'
 import * as Cookie from './cookie'
 import * as Control from './control'
 import * as Msg from './messaging'
+import * as Sf from './sitefuncs'
 
 window.traces = new Array();
 
@@ -51,28 +52,7 @@ function PageScript(test) {
 		[].forEach.call( document.getElementsByClassName("func"), function (e) { e.style.display="none"; } );
 	}
 	
-PageScript.prototype.QueryStringFunc = function (search) { //http://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-url-parameter
-  var query_string = {};
-  var query = search.substring(1);
-  var vars = query.split("&");
-  for (var i=0;i<vars.length;i++) {
-    var pair = vars[i].split("=");
-        // If first entry with this name
-    if (typeof query_string[pair[0]] === "undefined") {
-      query_string[pair[0]] = pair[1];
-        // If second entry with this name
-    } else if (typeof query_string[pair[0]] === "string") {
-      var arr = [ query_string[pair[0]], pair[1] ];
-      query_string[pair[0]] = arr;
-        // If third or later entry with this name
-    } else {
-      query_string[pair[0]].push(pair[1]);
-    }
-  } 
-    return query_string;
-};
-
-PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
+	PageScript.prototype.QueryString = Sf.QueryStringFunc(win.location.search);
 	
 	PageScript.prototype.getThis=function() {
 		return self
@@ -82,31 +62,21 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 		Msg.display({title:_("Server error occured"),error: text})
 	}
 	
-	PageScript.prototype.callback = Ajax.callback
-	
 	PageScript.prototype.commonInit=function() {
 		// initialising variables
 		if (self.page!='login') setup_the_navbar_buttons_onclick(self);
 		self.QueryString.uris = uris;
-		if ( typeof facebook != "undefined" && self.QueryString.uris.FACEBOOK_APP_ID ) facebook.fbinit();
+		if ( typeof facebook != "undefined" && uris.FACEBOOK_APP_ID ) facebook.fbinit();
 
 		// filling hrefs of anchors
 		[].forEach.call(document.getElementsByClassName("digest_self_made_button"), function(a){a.href=self.QueryString.uris.ANCHOR_URL})
 		self.initialise()
 		window.traces.push('initialized')
 	}
-	
-	PageScript.prototype.ajaxBase = Ajax.base
-
-	PageScript.prototype.ajaxpost = Ajax.ajaxpost
-
-	PageScript.prototype.ajaxget = Ajax.ajaxget
 		
 	PageScript.prototype.displayServerResponse = function( response, callbacks ){
-		Msg.display( self.processErrors( self.validateServerMessage( response ), callbacks ) )
+		Msg.display( self.processErrors( Ajax.validateServerMessage( response ), callbacks ) )
 	}
-	
-	PageScript.prototype.validateServerMessage = Ajax.validateServerMessage
 	
 	PageScript.prototype.processErrors = function(data, callbacks) {
 			var msg = {}, 
@@ -405,11 +375,11 @@ PageScript.prototype.QueryString = self.QueryStringFunc(win.location.search);
 				Control.getValue( "registration-form_email_input" ):
 				Control.getValue( "registration-form_identifier_input" ),
 			data= {
-	    	credentialType: credentialType,
-	    	identifier: identifier,
-	    	email: self.mailRepair( Control.getValue( "registration-form_email_input" ) ),
-	    	digest: Control.getValue("registration-form_digest_input"),
-			password: Control.getValue( "registration-form_secret_input" )
+				credentialType: credentialType,
+				identifier: identifier,
+				email: self.mailRepair( Control.getValue( "registration-form_email_input" ) ),
+				digest: Control.getValue("registration-form_digest_input"),
+				password: Control.getValue( "registration-form_secret_input" )
 	    }
 		window.traces.push(data)
 		window.traces.push("register")
