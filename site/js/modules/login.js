@@ -6,6 +6,7 @@ import { setup_login_page_controlls } from './setup_buttons'
 import * as Control from './control'
 import * as Msg from './messaging'
 import * as Cookie from './cookie'
+import * as Sf from './sitefuncs'
 export var pageScript = new PageScript()
 
 var self = pageScript
@@ -14,7 +15,9 @@ Msg.setTarget('div')
 PageScript.prototype.page = "login";
 
 PageScript.prototype.main = function() {
-	self.parseAppCallbackUrl();
+	var a=Sf.parseAppCallbackUrl(self.QueryString.next);
+	self.appDomain = a.appDomai
+	self.neededAssurances = a.neededAssurances
 	self.dataGivingAccepted=false;
 	console.log(self.neededAssurances)
 	console.log(self.appDomain)
@@ -26,19 +29,6 @@ PageScript.prototype.gettextCallback = function(response){
 	gettext.initGettext(response)
 	self.init_()
 } 
-
-PageScript.prototype.parseAppCallbackUrl = function() {
-	if (self.QueryString.next) {
-		var a=decodeURIComponent(self.QueryString.next).split("?")
-		var vars = self.QueryStringFunc('?'+a[1]);
-		if (vars.redirect_uri) {
-			var c=decodeURIComponent(vars.redirect_uri).split("?")
-			self.appDomain=c[0].split('://')[1].split('/')[0]
-			var b=self.QueryStringFunc('?'+c[1])
-			if (b.need)	self.neededAssurances=b.need.split(',')
-		}
-	}
-}
 
 PageScript.prototype.initialise = function() {
 	// redirect to official account page if callback uri is missing

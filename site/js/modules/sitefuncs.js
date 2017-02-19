@@ -13,3 +13,19 @@ export function QueryStringFunc( search ) { //http://stackoverflow.com/questions
 	} 
     return query_string;
 }
+
+export function parseAppCallbackUrl( url ) {
+	var neededAssurances,
+		appDomain
+	if ( url ) {
+		var a = decodeURIComponent( url ).split("?"),
+			vars = QueryStringFunc('?'+a[1]);
+		if (vars.redirect_uri) {
+			var c = decodeURIComponent(vars.redirect_uri).split("?")
+			appDomain=c[0].split('://')[1].split('/')[0]
+			var b = QueryStringFunc('?'+c[1])
+			if (b.need)	neededAssurances = b.need.split(',')
+		}
+	}
+	return { appdomain: appDomain, neededAssurances: neededAssurances }
+}
